@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"log"
-	"math"
 	"os"
 	"strconv"
 )
@@ -23,13 +22,12 @@ func main() {
 	left, right := getLists()
 	sLeft := sort(left)
 	sRight := sort(right)
-	fmt.Println(left)
-	fmt.Println(right)
-	var sum int
-	for i := range sLeft {
-		sum += int(math.Abs(float64(sLeft[i] - sRight[i])))
+
+	var sim int
+	for _, n := range sLeft {
+		sim += findSim(n, sRight)
 	}
-	fmt.Println(sum)
+	fmt.Println(sim)
 }
 func getLists() (left, right []int) {
 	file, err := os.OpenFile("input.txt", os.O_RDWR, 0644)
@@ -48,6 +46,21 @@ func getLists() (left, right []int) {
 		right = append(right, r)
 	}
 	return
+}
+
+func findSim(num int, list []int) int {
+
+	var sim int
+	for _, n := range list {
+		if n > num {
+			return num * sim
+		}
+		if n == num {
+			sim++
+		}
+	}
+
+	return sim
 }
 
 func splitPair(b string) (left, right int) {
