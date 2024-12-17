@@ -11,10 +11,43 @@ func main() {
 	reports := getReports()
 	var answer [][]int
 	for _, list := range reports {
-		if checkList(list) {
-			answer = append(answer, list)
+		//Check for early return
+		if list[0] == list[1] {
+			continue
 		}
+		firstCheck := verifyOrder(list)
+		if firstCheck == -1 {
+			answer = append(answer, list)
+		} else {
+			left := list[:firstCheck]
+			right := list[firstCheck+1:]
+
+			new := make([]int, len(left)+len(right))
+			for i := range left {
+				new[i] = left[i]
+			}
+			for j := range right {
+				new[j+len(left)] = right[j]
+			}
+
+			secondCheck := verifyOrder(new)
+
+			if secondCheck == -1 {
+				answer = append(answer, new)
+
+			} else {
+
+				finalList := list[1:]
+				finalCheck := verifyOrder(finalList)
+				if finalCheck == -1 {
+					answer = append(answer, list)
+				}
+			}
+
+		}
+
 	}
+
 	fmt.Println(len(answer))
 }
 
@@ -60,35 +93,50 @@ func convertToNumber(bytes []byte) []int {
 	return list
 }
 
-func checkList(list []int) bool {
-	if list[0] < list[1] {
-		for i := range list {
-			if i+1 > len(list)-1 {
-				return true
-			}
-			left := list[i]
-			right := list[i+1]
-			if left >= right {
-				return false
-			}
-			if right-left > 3 {
-				return false
-			}
+func checkList(list []int) int {
+	var orderErr int
+	for i := range list {
+		if i == len(list) {
+			break
 		}
-	} else if list[0] > list[1] {
-		for i := range list {
-			if i+1 > len(list)-1 {
-				return true
-			}
-			left := list[i]
-			right := list[i+1]
-			if left <= right {
-				return false
-			}
-			if left-right > 3 {
-				return false
-			}
+		left := list[i]
+		right := list[i+1]
+	}
+}
+
+//-----------------------------------------
+//------------ PREVIOUS ATTEMPTS-----------
+//-----------------------------------------
+/*
+// Treating the values like a graph. Position in the array is the X value and value in that spot is the Y value
+func verifyOrder(list []int) int {
+	// Direction of the slope. Positive slope means the graph is increasing
+	var originDirection, direction, delta int
+	maxDelta := 3
+	originDirection, _ = checkDelta(list[0], list[1])
+	listLen := len(list)
+	//Loop will check last element against the element before it
+	for i := 0; i < listLen-1; i++ {
+		j := i + 1
+		direction, delta = checkDelta(list[i], list[j])
+		if delta == 0 {
+			return j
+		}
+		if originDirection != direction || delta > maxDelta {
+			return j
 		}
 	}
-	return false
+
+	return -1
 }
+
+func checkDelta(left, right int) (int, int) {
+	if left > right {
+		delta := left - right
+		return 1, delta
+	} else {
+		delta := right - left
+		return -1, delta
+	}
+}
+*/
