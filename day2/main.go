@@ -101,6 +101,7 @@ func checkList(list []int) int {
 		}
 		left := list[i]
 		right := list[i+1]
+
 	}
 }
 
