@@ -46,19 +46,45 @@ func (g *Graph) seek() {
 			if n != 'A' {
 				continue
 			}
-			g.search(x, y)
+			first := g.NE_to_SW(x, y)
+
+			if first {
+				second := g.NW_to_SE(x, y)
+				if second {
+					g.Count++
+				}
+			}
 
 		}
 
 	}
 }
 
-func (G *Graph) NE_to_SW(x,y int) bool{
+func (G *Graph) NE_to_SW(x, y int) bool {
 	mas := []rune(xmas)
-	if G.Grid
+	if y-1 < 0 || x-1 < 0 || y+1 >= len(G.Grid) || x+1 >= len(G.Grid) {
+		return false
+	}
+	if G.Grid[y+1][x+1] == mas[0] && G.Grid[y-1][x-1] == mas[2] {
+		return true
+	} else if G.Grid[y+1][x+1] == mas[2] && G.Grid[y-1][x-1] == mas[0] {
+		return true
+	} else {
+		return false
+	}
 }
-func (G *Graph) NW_to_SE(x,y int){
-
+func (G *Graph) NW_to_SE(x, y int) bool {
+	mas := []rune(xmas)
+	if y-1 < 0 || x-1 < 0 || y+1 >= len(G.Grid) || x+1 >= len(G.Grid) {
+		return false
+	}
+	if G.Grid[y+1][x-1] == mas[0] && G.Grid[y-1][x+1] == mas[2] {
+		return true
+	} else if G.Grid[y+1][x-1] == mas[2] && G.Grid[y-1][x+1] == mas[0] {
+		return true
+	} else {
+		return false
+	}
 }
 
 func (G *Graph) search(x, y int) {
