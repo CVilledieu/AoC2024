@@ -21,25 +21,47 @@ func main() {
 	var sum int
 	rules, arr := getInput()
 	for _, li := range arr {
-		sum += checkArray(rules, li)
+		badArr, ok := checkArray(rules, li)
+
+		if ok {
+			sum += checkBadArrays(rules, badArr)
+		}
+
 	}
 	fmt.Println(sum)
 }
 
-func checkArray(m map[int][]int, arr []int) int {
-	var middle int
+func checkArray(rules map[int][]int, arr []int) ([]int, bool) {
 	noFlyList := make(map[int]bool)
-	fmt.Println(arr)
 	for _, n := range arr {
 		if noFlyList[n] {
-			return 0
+			return arr, true
 		}
-		for _, i := range m[n] {
+		for _, i := range rules[n] {
 			noFlyList[i] = true
 		}
 	}
+	return []int{}, false
+}
+
+func checkBadArrays(rules map[int][]int, arr []int) int {
+	var middle int
+
+	noFlyList := make(map[int]int)
+	//index is offset by one in map because default init for int in map will be 0
+	//Offset is done in hopes of preventing issues with 0th position in array
+	offset := 1
+	for i, m := range arr {
+		j := noFlyList[m]
+		if j > 0 {
+			arr[i], arr[j-offset] = arr[j-offset], arr[i]
+			return checkBadArrays(rules, arr)
+		}
+		for _, n := range rules[m] {
+			noFlyList[n] = i + offset
+		}
+	}
 	middle = arr[(len(arr) / 2)]
-	fmt.Println(middle)
 	return middle
 }
 
