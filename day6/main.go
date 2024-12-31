@@ -34,16 +34,20 @@ extra notes: area is not a rectangle not a square, (.) dots are unvisited locati
 */
 
 type Game struct {
-	board        [][]int
-	objCount     int
-	guardVisited int
-	guard        *Guard
+	board       [][]int
+	objCount    int
+	vertexs     int
+	lastVisited *Vertex
+	guard       *Guard
+}
+
+type Vertex struct {
+	previous *Vertex
+	x, y     int
 }
 
 type Guard struct {
-	x   int
-	y   int
-	dic rune
+	x, y, dic int
 }
 
 func main() {
@@ -51,11 +55,25 @@ func main() {
 
 	for {
 		end := game.moveGuard()
+		game.CheckSquare()
 		if end {
 			break
 		}
 	}
-	fmt.Println(game.guardVisited)
+	fmt.Println(game.vertexs)
+}
+
+func (G *Game) CheckSquare() int {
+	youngest := G.lastVisited
+	middleChild := youngest.previous
+	oldest := middleChild.previous
+
+	if oldest.x == youngest.x {
+
+	} else {
+
+	}
+
 }
 
 func (G *Game) moveGuard() bool {
@@ -69,15 +87,14 @@ func (G *Game) moveGuard() bool {
 		if tile == 1 {
 			break
 		}
-		if tile == 0 {
-			G.guardVisited++
-		}
 		G.board[guard.y+dY][guard.x+dX] = 3
 
 		guard.y += dY
 		guard.x += dX
 
 	}
+	v := Vertex{x: guard.x, y: guard.y, previous: G.lastVisited}
+	G.lastVisited = &v
 	guard.ChangeDic()
 	return false
 }
@@ -138,7 +155,7 @@ func createGame() *Game {
 				nG.objCount++
 			case rune('^'):
 				newRow = append(newRow, 3)
-				nG.guardVisited = 1
+				nG.lastVisited = &Vertex{x: x, y: y}
 				nG.guard = &Guard{x: x, y: y, dic: 'N'}
 			}
 		}
