@@ -1,11 +1,5 @@
 package main
 
-import (
-	"bufio"
-	"fmt"
-	"os"
-)
-
 /*
 input: a "map"
 ex:
@@ -31,7 +25,13 @@ Task:
 find how many spots the guard will visit
 
 extra notes: area is not a rectangle not a square, (.) dots are unvisited locations
-*/
+
+Thoughts:
+
+make 4 lists based on the directions the bot is facing
+Using nodes from 3 of the lists attempt to find a 4th node that would fit in the 4th
+
+
 
 type Game struct {
 	board       [][]int
@@ -63,16 +63,31 @@ func main() {
 	fmt.Println(game.vertexs)
 }
 
-func (G *Game) CheckSquare() int {
-	youngest := G.lastVisited
-	middleChild := youngest.previous
-	oldest := middleChild.previous
 
-	if oldest.x == youngest.x {
+possible combinations to form a square
+vertexA = (x1, y1)
+vertexB = (x1, y2) or (x2,y1)
+vertexC = (x2, y2)
+target = (x2, y1) or (x1, y2)
 
+func (G *Game) findMissingVertex(v []*Vertex) int {
+	vertexA := v[0]
+	vertexB := v[1]
+	vertexC := v[2]
+	target := Vertex{}
+	if vertexA.x == vertexB.x {
+		target.x = vertexC.x
+		target.y = vertexA.y
+	} else if vertexA.y == vertexB.y {
+		target.x = vertexB.x
+		target.y = vertexA.y
 	} else {
-
+		return 0
 	}
+	dXa := vertexA.x - target.x
+	dYa := vertexA.y - target.y
+	dXc := vertexC.x - target.x
+	dYc := vertexC.y - target.y
 
 }
 
@@ -172,3 +187,4 @@ func getScanner() *bufio.Scanner {
 	}
 	return bufio.NewScanner(file)
 }
+*/
